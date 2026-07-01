@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>¿Quieres ser mi novia?</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="card closed" id="letter-card" onclick="openLetter()">
+      <h2 id="cover-text">✉️ Tienes una carta... (Toca para abrir 🙈)</h2>
+
+      <div class="content" id="card-content">
+        <p class="question">¿Quieres ser mi novia? 🌹🌻🌷🌼 💙</p>
+
+        <div class="buttons-container" id="btn-container">
+          <button id="btn-yes" onclick="accepted(event)">¡SÍ!</button>
+          <button
+            id="btn-no"
+            onmouseover="moveButton(event)"
+            onclick="moveButton(event)"
+          >
+            No
+          </button>
+        </div>
+      </div>
+
+      <div class="success-message" id="success-view">
+        <h2>¡Sabía que dirías que sí! ❤️😍💘</h2>
+        <p class="main-success-text">
+          Me haces la persona más feliz del mundo TE AMO mucho mi vida.
+        </p>
+
+        <div class="gallery-container">
+          <div class="gallery-item">
+            <img src="/IMG-20260607-WA0058.jpg" alt="Momento especial 1" />
+            <p>
+              ¡Eres la mejor cosa que me ha pasado en la vida! Te amo
+              profundamente. ✨
+            </p>
+          </div>
+
+          <div class="gallery-item">
+            <img src="/IMG-20260605-WA0105.jpg" alt="Momento especial 2" />
+            <p>
+              Cada momento a tu lado es completamente mágico. Gracias por ser tú
+              y estar a mi lado 💖
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
