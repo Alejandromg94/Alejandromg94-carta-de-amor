@@ -3,6 +3,11 @@ const content = document.getElementById("card-content");
 const coverText = document.getElementById("cover-text");
 const btnNo = document.getElementById("btn-no");
 const successView = document.getElementById("success-view");
+const backgroundMusic = document.getElementById("background-music");
+
+let backgroundMusicStarted = false;
+let musicTimeoutId = null;
+let musicAudioContext = null;
 
 // 1. Abre la carta al hacerle click
 function openLetter() {
@@ -33,6 +38,80 @@ function moveButton(event) {
   btnNo.style.top = randomY + "px";
 }
 
+function startSynthMelody() {
+  const AudioContextCtor = window.AudioContext || window.webkitAudioContext;
+  if (!AudioContextCtor) {
+    return;
+  }
+
+  if (musicAudioContext) {
+    return;
+  }
+
+  musicAudioContext = new AudioContextCtor();
+  const melody = [
+    523.25, 659.25, 783.99, 659.25, 587.33, 523.25, 493.88, 523.25,
+  ];
+  let noteIndex = 0;
+
+  const playNextNote = () => {
+    if (!backgroundMusicStarted) {
+      return;
+    }
+
+    const frequency = melody[noteIndex % melody.length];
+    const oscillator = musicAudioContext.createOscillator();
+    const gainNode = musicAudioContext.createGain();
+
+    oscillator.type = "sine";
+    oscillator.frequency.value = frequency;
+
+    gainNode.gain.setValueAtTime(0.0001, musicAudioContext.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(
+      0.02,
+      musicAudioContext.currentTime + 0.02,
+    );
+    gainNode.gain.exponentialRampToValueAtTime(
+      0.0001,
+      musicAudioContext.currentTime + 0.46,
+    );
+
+    oscillator.connect(gainNode);
+    gainNode.connect(musicAudioContext.destination);
+
+    oscillator.start(musicAudioContext.currentTime);
+    oscillator.stop(musicAudioContext.currentTime + 0.5);
+
+    noteIndex += 1;
+    musicTimeoutId = window.setTimeout(playNextNote, 400);
+  };
+
+  musicAudioContext.resume().then(playNextNote);
+}
+
+function startBackgroundMusic() {
+  if (backgroundMusicStarted) {
+    return;
+  }
+
+  backgroundMusicStarted = true;
+
+  if (backgroundMusic) {
+    backgroundMusic.volume = 0.25;
+    backgroundMusic.currentTime = 0;
+
+    const playPromise = backgroundMusic.play();
+    if (playPromise && typeof playPromise.catch === "function") {
+      playPromise.catch(() => {
+        startSynthMelody();
+      });
+      return;
+    }
+  }
+
+  startSynthMelody();
+}
+
 // 3. Acción al presionar "SÍ"
 function accepted(event) {
   event.stopPropagation();
@@ -45,4 +124,7 @@ function accepted(event) {
 
   // Mostramos la sorpresa final con tu galería de fotos
   successView.style.display = "block";
+
+  // Iniciamos la melodía suave al aceptar
+  startBackgroundMusic();
 }
